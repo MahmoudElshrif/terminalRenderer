@@ -6,14 +6,14 @@
 using namespace std;
 
 string EMPTYDRAWBUFFER = "";
-int width = 400;
-int height = 100;
+int width = 620;
+int height = 130;
 int refreshtick = 0;
 int refreshtickmax = 300;
 
 string chars = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
-int **buffer;
+int *buffer;
 string drawbuffer = "";
 
 stack<int> edited;
@@ -35,7 +35,7 @@ bool valid_position(int x, int y)
 	return true;
 }
 
-void set_cell(int **buffer, int x, int y, int symb)
+void set_cell(int *buffer, int x, int y, int symb)
 {
 	symb = min(max(symb, 0), 255);
 	if (!valid_position(x, y))
@@ -44,46 +44,44 @@ void set_cell(int **buffer, int x, int y, int symb)
 	}
 
 	edited.push(y * width + x);
-	buffer[x][y] = symb;
+	buffer[x + y * width] = symb;
 }
 
-int get_cell(int **buffer, int x, int y)
+int get_cell(int *buffer, int x, int y)
 {
 	if (!valid_position(x, y))
 	{
 		return 0;
 	}
 
-	return buffer[x][y];
+	return buffer[x + y * width];
 }
-void clear_buffer(int **buffer)
+void clear_buffer(int *buffer)
 {
-	drawbuffer = EMPTYDRAWBUFFER;
+	fill(buffer, buffer + width * height, 0);
+	// drawbuffer = EMPTYDRAWBUFFER;
 
-	if (edited.size() > 300)
-	{
-		for (int i = 0; i < width; i++)
-		{
-			fill(buffer[i], buffer[i] + height, 0);
-		}
-	}
-	else
-	{
-		while (!edited.empty())
-		{
-			int pos = edited.top();
-			buffer[pos % width][pos / width] = 0;
-			edited.pop();
-		}
-	}
+	// if (edited.size() > 300)
+	// {
+	// 	for (int i = 0; i < width; i++)
+	// 	{
+	// 		fill(buffer[i], buffer[i] + height, 0);
+	// 	}
+	// }
+	// else
+	// {
+	// 	while (!edited.empty())
+	// 	{
+	// 		int pos = edited.top();
+	// 		buffer[pos % width][pos / width] = 0;
+	// 		edited.pop();
+	// 	}
+	// }
 }
 void init_buffer()
 {
-	buffer = new int *[width];
-	for (int i = 0; i < width; i++)
-	{
-		buffer[i] = new int[height];
-	}
+	buffer = new int[width * height];
+
 	for (int i = 0; i < height; i++)
 	{
 		EMPTYDRAWBUFFER += string(width, ' ');
@@ -91,7 +89,7 @@ void init_buffer()
 	clear_buffer(buffer);
 }
 
-void render_buffer(int **buffer)
+void render_buffer(int *buffer)
 {
 	string out = "";
 	refreshtick--;
@@ -115,7 +113,7 @@ void render_buffer(int **buffer)
 	cout.flush();
 }
 
-void draw_circle(int **buffer, int x, int y, int rad)
+void draw_circle(int *buffer, int x, int y, int rad)
 {
 	for (int xf = max(0, x - rad * 2); xf < min(width, x + rad * 2 + 1); xf++)
 	{
@@ -136,8 +134,8 @@ int main()
 	while (true)
 	{
 		clear_buffer(buffer);
-		x += 0.04;
-		draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 50);
+		x += 0.0004;
+		draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 30);
 		render_buffer(buffer);
 	}
 
