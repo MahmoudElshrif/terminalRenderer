@@ -4,25 +4,20 @@
 
 using namespace std;
 
-int width = 150;
-int height = 50;
+int width = 400;
+int height = 100;
 int refreshtick = 0;
-int refreshtickmax = 1000;
+int refreshtickmax = 300;
 
-string *buffer;
+string chars = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
-void clear_buffer(string *buffer)
+int **buffer;
+
+char get_character(int brightness)
 {
-	for (int i = 0; i < height; i++)
-	{
-		string s = string(width, ' ');
-		buffer[i] = s;
-	}
-}
-void init_buffer()
-{
-	buffer = new string[height];
-	clear_buffer(buffer);
+	int b = min(255, brightness);
+	// return 0;
+	return chars[(b / 255.0) * (chars.length() - 1)];
 }
 
 bool valid_position(int x, int y)
@@ -35,52 +30,80 @@ bool valid_position(int x, int y)
 	return true;
 }
 
-void set_cell(string *buffer, int x, int y, char symb)
+void set_cell(int **buffer, int x, int y, int symb)
 {
+	symb = min(max(symb, 0), 255);
 	if (!valid_position(x, y))
 	{
 		return;
 	}
 
-	buffer[y][x] = symb;
+	buffer[x][y] = symb;
 }
 
-char get_cell(string *buffer, int x, int y)
+int get_cell(int **buffer, int x, int y)
 {
 	if (!valid_position(x, y))
 	{
 		return 0;
 	}
 
-	return buffer[y][x];
+	return buffer[x][y];
+}
+void clear_buffer(int **buffer)
+{
+	for (int i = 0; i < width; i++)
+	{
+		for (int j = 0; j < height; j++)
+		{
+			int t = ((double)j / height * 255);
+			// cout << t << endl;
+			set_cell(buffer, i, j, t);
+		}
+	}
+}
+void init_buffer()
+{
+	buffer = new int *[width];
+	for (int i = 0; i < width; i++)
+	{
+		buffer[i] = new int[height];
+	}
+	clear_buffer(buffer);
 }
 
-void render_buffer(string *buffer)
+void render_buffer(int **buffer)
 {
 	string out = "";
-	if (refreshtick <= 0)
-	{
-		out += "\033[2J";
-		refreshtick = refreshtickmax;
-	}
 	refreshtick--;
-	for (int i = 0; i < height; i++)
+	if (refreshtick > 0)
 	{
-		out += buffer[i] + '\n';
+		return;
+	}
+	out += "\033[2J";
+	refreshtick = refreshtickmax;
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			// cout << get_cell(buffer, i, j) << endl;
+			out += get_character(get_cell(buffer, x, y));
+		}
+		out += '\n';
 	}
 	out += "\033[H";
 	cout << out;
 	cout.flush();
 }
 
-void draw_circle(string *buffer, int x, int y, int rad)
+void draw_circle(int **buffer, int x, int y, int rad)
 {
-	for (int xf = max(0, x - rad); xf < min(width, x + rad + 1); xf++)
+	for (int xf = max(0, x - rad * 2); xf < min(width, x + rad * 2 + 1); xf++)
 	{
 		for (int yf = max(0, y - rad); yf < min(height, y + rad + 1); yf++)
 		{
-			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) <= rad * rad)
-				set_cell(buffer, xf, yf, 'f');
+			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) / 4 <= rad * rad)
+				set_cell(buffer, xf, yf, 127);
 		}
 	}
 }
@@ -94,8 +117,8 @@ int main()
 	while (true)
 	{
 		clear_buffer(buffer);
-		x += 0.0005;
-		draw_circle(buffer, cos(x) * 10 + width / 2, sin(x) * 4 + height / 2, 4);
+		// x += 0.00005;
+		// draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 4);
 		render_buffer(buffer);
 	}
 
