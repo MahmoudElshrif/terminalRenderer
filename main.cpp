@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <stack>
 
 using namespace std;
 
+string EMPTYDRAWBUFFER = "";
 int width = 400;
 int height = 100;
 int refreshtick = 0;
@@ -12,6 +14,9 @@ int refreshtickmax = 300;
 string chars = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
 int **buffer;
+string drawbuffer = "";
+
+stack<int> edited;
 
 char get_character(int brightness)
 {
@@ -38,6 +43,7 @@ void set_cell(int **buffer, int x, int y, int symb)
 		return;
 	}
 
+	edited.push(y * width + x);
 	buffer[x][y] = symb;
 }
 
@@ -52,13 +58,22 @@ int get_cell(int **buffer, int x, int y)
 }
 void clear_buffer(int **buffer)
 {
-	for (int i = 0; i < width; i++)
+	drawbuffer = EMPTYDRAWBUFFER;
+
+	if (edited.size() > 300)
 	{
-		for (int j = 0; j < height; j++)
+		for (int i = 0; i < width; i++)
 		{
-			int t = ((double)j / height * 255);
-			// cout << t << endl;
-			set_cell(buffer, i, j, t);
+			fill(buffer[i], buffer[i] + height, 0);
+		}
+	}
+	else
+	{
+		while (!edited.empty())
+		{
+			int pos = edited.top();
+			buffer[pos % width][pos / width] = 0;
+			edited.pop();
 		}
 	}
 }
@@ -68,6 +83,10 @@ void init_buffer()
 	for (int i = 0; i < width; i++)
 	{
 		buffer[i] = new int[height];
+	}
+	for (int i = 0; i < height; i++)
+	{
+		EMPTYDRAWBUFFER += string(width, ' ');
 	}
 	clear_buffer(buffer);
 }
@@ -103,7 +122,7 @@ void draw_circle(int **buffer, int x, int y, int rad)
 		for (int yf = max(0, y - rad); yf < min(height, y + rad + 1); yf++)
 		{
 			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) / 4 <= rad * rad)
-				set_cell(buffer, xf, yf, 127);
+				set_cell(buffer, xf, yf, 100);
 		}
 	}
 }
@@ -117,8 +136,8 @@ int main()
 	while (true)
 	{
 		clear_buffer(buffer);
-		// x += 0.00005;
-		// draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 4);
+		x += 0.04;
+		draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 50);
 		render_buffer(buffer);
 	}
 
