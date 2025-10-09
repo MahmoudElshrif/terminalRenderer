@@ -2,18 +2,20 @@
 #include <string>
 #include <cmath>
 #include <stack>
+#include <vector>
+#include <queue>
+#include "utils.cpp"
+#include <deque>
 
 using namespace std;
 
 string EMPTYDRAWBUFFER = "";
 int width = 620;
 int height = 130;
-int refreshtick = 0;
-int refreshtickmax = 300;
+;
 
 string chars = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 
-int *buffer;
 string drawbuffer = "";
 
 stack<int> edited;
@@ -35,7 +37,7 @@ bool valid_position(int x, int y)
 	return true;
 }
 
-void set_cell(int *buffer, int x, int y, int symb)
+void set_cell(int x, int y, int symb)
 {
 	symb = min(max(symb, 0), 255);
 	if (!valid_position(x, y))
@@ -44,83 +46,50 @@ void set_cell(int *buffer, int x, int y, int symb)
 	}
 
 	edited.push(y * width + x);
-	buffer[x + y * width] = symb;
+
+	drawbuffer[x + y * width] = get_character((char)symb);
 }
 
-int get_cell(int *buffer, int x, int y)
+void clear_buffer()
 {
-	if (!valid_position(x, y))
-	{
-		return 0;
-	}
-
-	return buffer[x + y * width];
-}
-void clear_buffer(int *buffer)
-{
-	fill(buffer, buffer + width * height, 0);
-	// drawbuffer = EMPTYDRAWBUFFER;
-
-	// if (edited.size() > 300)
-	// {
-	// 	for (int i = 0; i < width; i++)
-	// 	{
-	// 		fill(buffer[i], buffer[i] + height, 0);
-	// 	}
-	// }
-	// else
-	// {
-	// 	while (!edited.empty())
-	// 	{
-	// 		int pos = edited.top();
-	// 		buffer[pos % width][pos / width] = 0;
-	// 		edited.pop();
-	// 	}
-	// }
+	drawbuffer = EMPTYDRAWBUFFER;
 }
 void init_buffer()
 {
-	buffer = new int[width * height];
-
+	printf("\033[2]j");
 	for (int i = 0; i < height; i++)
 	{
 		EMPTYDRAWBUFFER += string(width, ' ');
 	}
-	clear_buffer(buffer);
+
+	clear_buffer();
 }
 
-void render_buffer(int *buffer)
+void render_buffer()
 {
-	string out = "";
-	refreshtick--;
-	if (refreshtick > 0)
+	for (int k = 0; k < width * height; k++)
 	{
-		return;
-	}
-	out += "\033[2J";
-	refreshtick = refreshtickmax;
-	for (int y = 0; y < height; y++)
-	{
-		for (int x = 0; x < width; x++)
+		if (k < width || k < height - width)
 		{
-			// cout << get_cell(buffer, i, j) << endl;
-			out += get_character(get_cell(buffer, x, y));
+			putchar('#');
 		}
-		out += '\n';
+		else
+		{
+			putchar(k % width ? drawbuffer[k] : 10);
+		}
 	}
-	out += "\033[H";
-	cout << out;
-	cout.flush();
+
+	printf("\033[H");
 }
 
-void draw_circle(int *buffer, int x, int y, int rad)
+void draw_circle(int x, int y, int rad, int bright = 254)
 {
-	for (int xf = max(0, x - rad * 2); xf < min(width, x + rad * 2 + 1); xf++)
+	for (int xf = max(0, x - rad * 8); xf < min(width, x + rad * 8 + 1); xf++)
 	{
 		for (int yf = max(0, y - rad); yf < min(height, y + rad + 1); yf++)
 		{
-			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) / 4 <= rad * rad)
-				set_cell(buffer, xf, yf, 100);
+			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) / 8 <= rad * rad)
+				set_cell(xf, yf, bright - 127);
 		}
 	}
 }
@@ -130,13 +99,64 @@ int main()
 	std::ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	init_buffer();
-	double x = 0;
+	vector<double> position = {width / 2., height / 2.};
+	vector<double> v = {3, 0};
+	int rad = 5;
+	auto lastframe = timeSinceEpochMillisec();
+	auto frame = timeSinceEpochMillisec();
+
+	double framerate = 1 / 120.;
+	deque<vector<double>> lastposes = {};
+
 	while (true)
 	{
-		clear_buffer(buffer);
-		x += 0.0004;
-		draw_circle(buffer, cos(x) * 30 + width / 2, sin(x) * 15 + height / 2, 30);
-		render_buffer(buffer);
+		frame = timeSinceEpochMillisec();
+		double delta = (frame - lastframe) / 1000.;
+		if (delta < framerate)
+		{
+			continue;
+		}
+		lastframe = frame;
+
+		clear_buffer();
+		lastposes.push_back(position);
+
+		if (lastposes.size() > 10)
+		{
+			lastposes.pop_front();
+		}
+
+		v[1] += 9 * framerate;
+		if (position[1] + rad + v[1] > height)
+		{
+			v[1] = -v[1] * 0.999;
+			position[1] = height - rad;
+		}
+		if (position[1] + rad + v[1] < 0)
+		{
+			v[1] = -v[1];
+		}
+
+		if (position[0] + rad > width)
+		{
+			v[0] = -v[0];
+		}
+
+		if (position[0] - rad < 0)
+		{
+			v[0] = -v[0];
+		}
+		position = add(position, v);
+
+		int bright = 100;
+		for (auto i : lastposes)
+		{
+			draw_circle(i[0], i[1], 2, bright);
+			bright += 10;
+		}
+		draw_circle(position[0], position[1], 2);
+
+		render_buffer();
 	}
 
 	return 0;
