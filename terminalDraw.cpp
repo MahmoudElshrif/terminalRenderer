@@ -2,15 +2,17 @@
 
 #include <string>
 #include <stack>
+#include <vector>
 
 using namespace std;
 
 struct Screen
 {
 	string EMPTYDRAWBUFFER = "";
-	int width = 620;
-	int height = 130;
+	int width = 640;
+	int height = 260;
 	string drawbuffer = "";
+	std::vector<double> zbuffer;
 
 	string chars = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@";
 };
@@ -25,7 +27,7 @@ char get_character(Screen &screen, int brightness)
 bool valid_position(int x, int y, int width, int height)
 {
 	if (x < 0 || y < 0 ||
-		x > width || y > height)
+		x >= width || y >= height)
 	{
 		return false;
 	}
@@ -43,7 +45,7 @@ void set_cell(Screen &screen, int x, int y, int symb)
 	screen.drawbuffer[x + y * screen.width] = (char)symb;
 }
 
-void set_cell_brightness(Screen &screen, int x, int y, int symb)
+void set_cell_brightness(Screen &screen, int x, int y, int symb, double z = 0)
 {
 	symb = min(max(symb, 0), 255);
 	if (!valid_position(x, y, screen.width, screen.height))
@@ -51,12 +53,17 @@ void set_cell_brightness(Screen &screen, int x, int y, int symb)
 		return;
 	}
 
-	screen.drawbuffer[x + y * screen.width] = get_character(screen, (char)symb);
+	if (screen.zbuffer[x + y * screen.width] >= z)
+	{
+		screen.zbuffer[x + y * screen.width] = z;
+		screen.drawbuffer[x + y * screen.width] = get_character(screen, (char)symb);
+	}
 }
 
 void clear_buffer(Screen &screen)
 {
 	screen.drawbuffer = screen.EMPTYDRAWBUFFER;
+	screen.zbuffer = vector<double>(screen.width * screen.height);
 }
 void init_buffer(Screen &screen)
 {
@@ -65,6 +72,7 @@ void init_buffer(Screen &screen)
 	{
 		screen.EMPTYDRAWBUFFER += string(screen.width, ' ');
 	}
+	screen.zbuffer = vector<double>(screen.width * screen.height);
 
 	clear_buffer(screen);
 }
