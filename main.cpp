@@ -13,7 +13,7 @@ int main()
 	while (true)
 	{
 		clear_buffer(screen);
-		draw_cube(screen, 0, 0, 10, 10, A, B, C);
+		draw_cube(screen, 0, 0, 30, 10, A, B, C);
 		A += 0.007;
 		B -= 0.009;
 		C -= 0.005;

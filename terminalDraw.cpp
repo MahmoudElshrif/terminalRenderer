@@ -10,7 +10,7 @@ struct Screen
 {
 	string EMPTYDRAWBUFFER = "";
 	int width = 640;
-	int height = 260;
+	int height = 130;
 	string drawbuffer = "";
 	std::vector<double> zbuffer;
 
@@ -68,10 +68,7 @@ void clear_buffer(Screen &screen)
 void init_buffer(Screen &screen)
 {
 	printf("\033[2]j");
-	for (int i = 0; i < screen.height; i++)
-	{
-		screen.EMPTYDRAWBUFFER += string(screen.width, ' ');
-	}
+	screen.EMPTYDRAWBUFFER += string(screen.width * screen.height, ' ');
 	screen.zbuffer = vector<double>(screen.width * screen.height);
 
 	clear_buffer(screen);
