@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include "terminalDraw.cpp"
-#include "vector.cpp"
+#include "utils.cpp"
 
 void draw_circle(Screen &screen, int x, int y, int rad, int bright = 254)
 {
@@ -50,29 +50,18 @@ void draw_rect(Screen &screen, double x, double y, double width, double height, 
 	}
 }
 
-void draw_triangle(Screen &screen, Vector2 a, Vector2 b, Vector2 c)
+void draw_triangle(Screen &screen, Triangle tri)
 {
-	Rect rect = {a, {1., 1.}};
-	grow_to_fit(rect, b);
-	grow_to_fit(rect, c);
+	Rect rect = triangle_bounding_box(tri);
 	clip_rect_to_screen(rect, screen);
-	double firstdom = (b.y - a.y) * (c.x - a.x) - (b.x - a.x) * (c.y - a.y);
-	double seconddom = c.y - a.y;
 	for (int i = rect.pos.x; i < rect.pos.x + rect.size.x; i++)
 	{
 		for (int j = rect.pos.y; j < rect.pos.y + rect.size.y; j++)
 		{
-			Vector2 p = {i, j};
-			double w1 = (a.x * (c.y - a.y) + (p.y - a.y) * (c.x - a.x) - p.x * (c.y - a.y)) / firstdom;
-			if (w1 < 0)
-				continue;
-			double w2 = (p.y - a.y - w1 * (b.y - a.y)) / seconddom;
-			if (w2 < 0)
-				continue;
-			if (w1 + w2 > 1.)
-				continue;
-
-			set_cell(screen, i, j, '#');
+			if (triangle_containes_point(tri, {(double)i, (double)j}))
+			{
+				set_cell(screen, i, j, '#');
+			}
 		}
 	}
 	// draw_rect(screen, rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);

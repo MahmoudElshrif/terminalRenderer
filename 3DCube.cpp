@@ -48,32 +48,36 @@ void project_on_surface(Screen &screen, double x, double y, double z, char symb)
 	}
 }
 
+struct Triangle3D
+{
+};
+
 void draw_cube(Screen &screen, int x, int y, int z, double size, double A = 0, double B = 0, double C = 0, double stepsize = 0.3)
 {
 	stepsize *= z / 60.;
-	for (double i = -size / 2; i < size / 2; i += stepsize)
-	{
-		for (double j = -size / 2; j < size / 2; j += stepsize)
-		{
-			vector<double> point;
+	// for (double i = -size / 2; i < size / 2; i += stepsize)
+	// {
+	// 	for (double j = -size / 2; j < size / 2; j += stepsize)
+	// 	{
+	// 		vector<double> point;
 
-			point = {i, j, (double)-size / 2};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
+	// 		point = {i, j, (double)-size / 2};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
 
-			point = {size / 2, j, i};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'K');
+	// 		point = {size / 2, j, i};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'K');
 
-			point = {-size / 2, j, -i};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '/');
+	// 		point = {-size / 2, j, -i};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '/');
 
-			point = {-i, j, size / 2};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '%');
+	// 		point = {-i, j, size / 2};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '%');
 
-			point = {i, -size / 2, -j};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
+	// 		point = {i, -size / 2, -j};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
 
-			point = {i, size / 2, j};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '>');
-		}
-	}
+	// 		point = {i, size / 2, j};
+	// 		project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '>');
+	// 	}
+	// }
 }
