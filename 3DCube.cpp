@@ -61,19 +61,19 @@ void draw_cube(Screen &screen, int x, int y, int z, double size, double A = 0, d
 			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
 
 			point = {size / 2, j, i};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'A');
+			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'K');
 
 			point = {-size / 2, j, -i};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
+			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '/');
 
 			point = {-i, j, size / 2};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'A');
+			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '%');
 
 			point = {i, -size / 2, -j};
 			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '#');
 
 			point = {i, size / 2, j};
-			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), 'A');
+			project_on_surface(screen, x + calcX(point[0], point[1], point[2], A, B, C), y + calcY(point[0], point[1], point[2], A, B, C), z + calcZ(point[0], point[1], point[2], A, B, C), '>');
 		}
 	}
 }

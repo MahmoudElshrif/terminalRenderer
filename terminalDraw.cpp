@@ -10,7 +10,7 @@ struct Screen
 {
 	string EMPTYDRAWBUFFER = "";
 	int width = 640;
-	int height = 130;
+	int height = 120;
 	string drawbuffer = "";
 	std::vector<double> zbuffer;
 
