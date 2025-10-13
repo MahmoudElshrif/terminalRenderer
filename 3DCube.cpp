@@ -46,7 +46,64 @@ struct Triangle3D
 	Vector3 c;
 };
 
-Triangle2D project_triangle_on_surface(Screen &screen, Triangle3D tri)
+struct Mesh
+{
+	vector<Triangle3D> mesh;
+};
+
+const Mesh cube{
+	// Mesh {vector {Triangle2D {Vector3}}}
+	{
+		// Front
+		{
+			{-0.5, -0.5, 0.5},
+			{-0.5, 0.5, 0.5},
+			{0.5, 0.5, 0.5},
+		},
+		{
+			{-0.5, -0.5, 0.5},
+			{0.5, 0.5, 0.5},
+			{0.5, -0.5, 0.5},
+		},
+		// Left
+		{
+			{-0.5, -0.5, -0.5},
+			{-0.5, 0.5, -0.5},
+			{-0.5, 0.5, 0.5},
+		},
+		{
+			{-0.5, -0.5, -0.5},
+			{-0.5, 0.5, 0.5},
+			{-0.5, 0.5, -0.5},
+		},
+		// right
+
+		{
+			{0.5, -0.5, 0.5},
+			{0.5, 0.5, 0.5},
+			{0.5, -0.5, -0.5},
+		},
+		{
+			{0.5, -0.5, -0.5},
+			{0.5, 0.5, 0.5},
+			{0.5, -0.5, 0.5},
+		},
+		// back
+		{
+			{0.5, 0.5, -0.5},
+			{-0.5, -0.5, -0.5},
+			{-0.5, 0.5, -0.5},
+		},
+		{
+			{0.5, 0.5, -0.5},
+			{0.5, -0.5, -0.5},
+			{-0.5, -0.5, -0.5},
+		},
+
+	}};
+
+Triangle2D
+project_triangle_on_surface(Screen &screen, Triangle3D tri)
 {
 	return {
 		project_on_surface(screen, tri.a),
@@ -54,23 +111,34 @@ Triangle2D project_triangle_on_surface(Screen &screen, Triangle3D tri)
 		project_on_surface(screen, tri.c)};
 }
 
-void draw_cube(Screen &screen, int x, int y, int z, double size, double A = 0, double B = 0, double C = 0, double stepsize = 0.3)
+Vector3 rotate_point(Vector3 p, Vector3 rot)
 {
-	stepsize *= z / 60.;
-
-	Triangle3D t1 = {
-		{x - size / 2., y - size / 2., z + size / 2.},
-		{x - size / 2., y + size / 2., z + size / 2.},
-		{x + size / 2., y + size / 2., z + size / 2.},
+	return {
+		calcX(p.x, p.y, p.z, rot.x, rot.y, rot.z),
+		calcY(p.x, p.y, p.z, rot.x, rot.y, rot.z),
+		calcZ(p.x, p.y, p.z, rot.x, rot.y, rot.z),
 	};
-	Triangle3D t2 = {
-		{x - size / 2., y - size / 2., z + size / 2.},
-		{x + size / 2., y + size / 2., z + size / 2.},
-		{x + size / 2., y - size / 2., z + size / 2.},
-	};
+}
 
-	draw_triangle(screen, project_triangle_on_surface(screen, t1));
-	draw_triangle(screen, project_triangle_on_surface(screen, t2));
+void draw_cube(Screen &screen, Vector3 pos, double size, Vector3 rot)
+{
+
+	for (Triangle3D i : cube.mesh)
+	{
+		i.a = rotate_point(i.a, rot);
+		i.b = rotate_point(i.b, rot);
+		i.c = rotate_point(i.c, rot);
+
+		i.a = mult(i.a, size);
+		i.b = mult(i.b, size);
+		i.c = mult(i.c, size);
+
+		i.a = add(i.a, pos);
+		i.b = add(i.b, pos);
+		i.c = add(i.c, pos);
+
+		draw_triangle(screen, project_triangle_on_surface(screen, i));
+	}
 	// for (double i = -size / 2; i < size / 2; i += stepsize)
 	// {
 	// 	for (double j = -size / 2; j < size / 2; j += stepsize)

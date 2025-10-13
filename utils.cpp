@@ -116,3 +116,48 @@ Rect triangle_bounding_box(Triangle2D &tri)
 	grow_to_fit(rect, tri.c);
 	return rect;
 }
+
+Vector2 add(Vector2 v1, Vector2 v2)
+{
+	return {
+		v1.x + v2.x,
+		v1.y + v2.y};
+}
+
+Vector3 add(Vector3 v1, Vector3 v2)
+{
+	return {
+		v1.x + v2.x,
+		v1.y + v2.y,
+		v1.z + v2.z};
+}
+
+Vector2 mult(Vector2 v1, Vector2 v2)
+{
+	return {
+		v1.x * v2.x,
+		v1.y * v2.y};
+}
+
+Vector3 mult(Vector3 v1, Vector3 v2)
+{
+	return {
+		v1.x * v2.x,
+		v1.y * v2.y,
+		v1.z * v2.z};
+}
+
+Vector2 mult(Vector2 v1, double a)
+{
+	return {
+		v1.x * a,
+		v1.y * a};
+}
+
+Vector3 mult(Vector3 v1, double a)
+{
+	return {
+		v1.x * a,
+		v1.y * a,
+		v1.z * a};
+}
