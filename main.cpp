@@ -19,9 +19,11 @@ int main()
 		// draw_cube(screen, 0, 0, 30, 10, A, B, C);
 		// draw_cube(screen, -0.5, 0, 60, 10, A, B, C);
 		// draw_circle(screen, screen.width / 2., screen.height / 2., 10);
-		Triangle tri = {
-			{screen.width / 2 - sin(A) * 4., screen.height / 2. + sin(A * 0.5) * 10}, {60 - sin(B * 0.3) * 40, 10 + cos(B * 3) * 2}, {100 + cos(C * 0.7) * 130, 40 - sin(C * 0.1)}};
-		draw_triangle(screen, tri);
+		// Triangle2D tri = {
+		// 	{screen.width / 2 - sin(A) * 4., screen.height / 2. + sin(A * 0.5) * 10}, {60 - sin(B * 0.3) * 40, 10 + cos(B * 3) * 2}, {100 + cos(C * 0.7) * 130, 40 - sin(C * 0.1)}};
+		// draw_triangle(screen, tri);
+
+		draw_cube(screen, 0., 0., 60, 10, A, B, C);
 		A += 0.007;
 		B -= 0.009;
 		C -= 0.005;

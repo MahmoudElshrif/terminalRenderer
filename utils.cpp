@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <cstdint>
 #include <chrono>
@@ -79,14 +81,14 @@ void clip_rect_to_screen(Rect &rect, Screen &screen)
 	rect.size.y = min(screen.height, (int)(rect.pos.y + rect.size.y)) - rect.pos.y;
 }
 
-struct Triangle
+struct Triangle2D
 {
 	Vector2 a;
 	Vector2 b;
 	Vector2 c;
 };
 
-bool triangle_containes_point(Triangle &tri, Vector2 p)
+bool triangle_containes_point(Triangle2D &tri, Vector2 p)
 {
 	Vector2 a = tri.a;
 	Vector2 b = tri.b;
@@ -107,7 +109,7 @@ bool triangle_containes_point(Triangle &tri, Vector2 p)
 	return true;
 }
 
-Rect triangle_bounding_box(Triangle &tri)
+Rect triangle_bounding_box(Triangle2D &tri)
 {
 	Rect rect = {tri.a, {1., 1.}};
 	grow_to_fit(rect, tri.b);

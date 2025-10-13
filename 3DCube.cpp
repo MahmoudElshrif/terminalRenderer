@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include "utils.cpp"
+#include "shapeDraw.cpp"
 
 double calcX(double i, double j, double k, double A, double B, double C)
 {
@@ -24,37 +26,51 @@ double calcZ(double i, double j, double k, double A, double B, double C)
 		   j * sin(B);
 }
 
-void project_on_surface(Screen &screen, double x, double y, double z, char symb)
+Vector2 project_on_surface(Screen &screen, Vector3 p)
 {
 	double fov = 1.0 / tan(90 / 2.0);
-	if (z < fov)
-	{
-		return;
-	}
-	double xp = fov * x / z;
-	double yp = fov * y / z;
 
-	int sx = (int)((xp + 1) * 0.5 * screen.width);
-	int sy = (int)((yp + 1) * 0.5 * screen.height);
-	if (!valid_position(sx, sy, screen.width, screen.height))
-	{
-		return;
-	}
-	// std::cout << sx << std::endl;
-	if (screen.zbuffer[sx + sy * screen.width] < 1 / z)
-	{
-		screen.zbuffer[sx + sy * screen.width] = 1 / z;
-		set_cell(screen, sx, sy, symb);
-	}
+	double xp = fov * p.x / p.z;
+	double yp = fov * p.y / p.z;
+
+	double sx = (int)((xp + 1) * 0.5 * screen.width);
+	double sy = (int)((yp + 1) * 0.5 * screen.height);
+
+	return {sx, sy};
 }
 
 struct Triangle3D
 {
+	Vector3 a;
+	Vector3 b;
+	Vector3 c;
 };
+
+Triangle2D project_triangle_on_surface(Screen &screen, Triangle3D tri)
+{
+	return {
+		project_on_surface(screen, tri.a),
+		project_on_surface(screen, tri.b),
+		project_on_surface(screen, tri.c)};
+}
 
 void draw_cube(Screen &screen, int x, int y, int z, double size, double A = 0, double B = 0, double C = 0, double stepsize = 0.3)
 {
 	stepsize *= z / 60.;
+
+	Triangle3D t1 = {
+		{x - size / 2., y - size / 2., z + size / 2.},
+		{x - size / 2., y + size / 2., z + size / 2.},
+		{x + size / 2., y + size / 2., z + size / 2.},
+	};
+	Triangle3D t2 = {
+		{x - size / 2., y - size / 2., z + size / 2.},
+		{x + size / 2., y + size / 2., z + size / 2.},
+		{x + size / 2., y - size / 2., z + size / 2.},
+	};
+
+	draw_triangle(screen, project_triangle_on_surface(screen, t1));
+	draw_triangle(screen, project_triangle_on_surface(screen, t2));
 	// for (double i = -size / 2; i < size / 2; i += stepsize)
 	// {
 	// 	for (double j = -size / 2; j < size / 2; j += stepsize)

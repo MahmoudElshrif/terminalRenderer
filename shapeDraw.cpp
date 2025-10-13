@@ -50,7 +50,7 @@ void draw_rect(Screen &screen, double x, double y, double width, double height, 
 	}
 }
 
-void draw_triangle(Screen &screen, Triangle tri)
+void draw_triangle(Screen &screen, Triangle2D tri)
 {
 	Rect rect = triangle_bounding_box(tri);
 	clip_rect_to_screen(rect, screen);
