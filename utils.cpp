@@ -127,20 +127,16 @@ bool triangle_containes_point(Triangle2D &tri, Vector2 p)
 	Vector2 a = tri.a;
 	Vector2 b = tri.b;
 	Vector2 c = tri.c;
+	double s = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
+	double t = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
 
-	double firstdom = (b.y - a.y) * (c.x - a.x) - (b.x - a.x) * (c.y - a.y);
-	double seconddom = c.y - a.y;
+	if ((s < 0) != (t < 0) && s != 0 && t != 0)
+	{
+		return false;
+	}
 
-	double w1 = (a.x * (c.y - a.y) + (p.y - a.y) * (c.x - a.x) - p.x * (c.y - a.y)) / firstdom;
-	if (w1 < 0)
-		return false;
-	double w2 = (p.y - a.y - w1 * (b.y - a.y)) / seconddom;
-	if (w2 < 0)
-		return false;
-	if (w1 + w2 > 1.)
-		return false;
-
-	return true;
+	double d = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
+	return d == 0 || (d < 0) == (s + t <= 0);
 }
 
 Rect triangle_bounding_box(Triangle2D &tri)
