@@ -13,8 +13,13 @@ int main()
 	double C = 1.2;
 	std::cout << "\033[?25l";
 
+	double lastframe = timeSinceEpochMillisec();
+	double frame = timeSinceEpochMillisec();
 	while (true)
 	{
+		lastframe = frame;
+		frame = timeSinceEpochMillisec();
+		double deltatime = (frame - lastframe) / 1000.;
 		clear_buffer(screen);
 		// draw_cube(screen, 0, 0, 30, 10, A, B, C);
 		// draw_cube(screen, -0.5, 0, 60, 10, A, B, C);
@@ -24,9 +29,9 @@ int main()
 		// draw_triangle(screen, tri);
 
 		draw_cube(screen, {0., 0., 30}, 10, {A, B, C});
-		A += 0.007;
-		B -= 0.009;
-		C -= 0.005;
+		A += 0.7 * deltatime;
+		B -= 0.9 * deltatime;
+		C -= 0.5 * deltatime;
 		render_buffer(screen);
 	}
 

@@ -64,8 +64,4 @@ void draw_triangle(Screen &screen, Triangle2D tri)
 			}
 		}
 	}
-	// draw_rect(screen, rect.pos.x, rect.pos.y, rect.size.x, rect.size.y);
-	// draw_circle(screen, a.x, a.y, 2);
-	// draw_circle(screen, b.x, b.y, 2);
-	// draw_circle(screen, c.x, c.y, 2);
 }

@@ -35,6 +35,10 @@ struct Vector2
 	{
 		return {x - v2.x, y - v2.y};
 	}
+	Vector2 operator-()
+	{
+		return {-x, -y};
+	}
 	Vector2 operator*(Vector2 v2)
 	{
 		return {x * v2.x, y * v2.y};
@@ -42,6 +46,14 @@ struct Vector2
 	Vector2 operator/(Vector2 v2)
 	{
 		return {x / v2.x, y / v2.y};
+	}
+	Vector2 operator*(double i)
+	{
+		return {x * i, y * i};
+	}
+	Vector2 operator/(double i)
+	{
+		return {x / i, y / i};
 	}
 };
 
@@ -59,6 +71,10 @@ struct Vector3
 	{
 		return {x - v2.x, y - v2.y, z - v2.z};
 	}
+	Vector3 operator-()
+	{
+		return {-x, -y, -z};
+	}
 	Vector3 operator*(Vector3 v2)
 	{
 		return {x * v2.x, y * v2.y, z * v2.z};
@@ -66,6 +82,15 @@ struct Vector3
 	Vector3 operator/(Vector3 v2)
 	{
 		return {x / v2.x, y / v2.y, z / v2.z};
+	}
+
+	Vector3 operator*(double i)
+	{
+		return {x * i, y * i, z * i};
+	}
+	Vector3 operator/(double i)
+	{
+		return {x / i, y / i, z / i};
 	}
 };
 
@@ -121,6 +146,30 @@ struct Triangle2D
 	Vector2 b;
 	Vector2 c;
 };
+
+struct Triangle3D
+{
+	Vector3 a;
+	Vector3 b;
+	Vector3 c;
+};
+
+bool triangle_containes_point(Triangle3D &tri, Vector2 p)
+{
+	Vector3 a = tri.a;
+	Vector3 b = tri.b;
+	Vector3 c = tri.c;
+	double s = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
+	double t = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+
+	if ((s < 0) != (t < 0) && s != 0 && t != 0)
+	{
+		return false;
+	}
+
+	double d = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
+	return d == 0 || (d < 0) == (s + t <= 0);
+}
 
 bool triangle_containes_point(Triangle2D &tri, Vector2 p)
 {
@@ -190,4 +239,23 @@ Vector3 mult(Vector3 v1, double a)
 		v1.x * a,
 		v1.y * a,
 		v1.z * a};
+}
+
+double dot(Vector3 v1, Vector3 v2)
+{
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+Vector3 cross(Vector3 v1, Vector3 v2)
+{
+	return {
+		v1.y * v2.z - v2.z - v1.y,
+		v1.z * v2.x - v1.x * v2.z,
+		v1.x * v2.y - v1.y * v2.x};
+}
+
+Vector3 normalize(Vector3 v)
+{
+	double len = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	return v / len;
 }
