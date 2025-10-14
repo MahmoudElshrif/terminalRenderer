@@ -26,6 +26,23 @@ struct Vector2
 {
 	double x;
 	double y;
+
+	Vector2 operator+(Vector2 v2)
+	{
+		return {x + v2.x, y + v2.y};
+	}
+	Vector2 operator-(Vector2 v2)
+	{
+		return {x - v2.x, y - v2.y};
+	}
+	Vector2 operator*(Vector2 v2)
+	{
+		return {x * v2.x, y * v2.y};
+	}
+	Vector2 operator/(Vector2 v2)
+	{
+		return {x / v2.x, y / v2.y};
+	}
 };
 
 struct Vector3
@@ -33,6 +50,23 @@ struct Vector3
 	double x;
 	double y;
 	double z;
+
+	Vector3 operator+(Vector3 v2)
+	{
+		return {x + v2.x, y + v2.y, z + v2.z};
+	}
+	Vector3 operator-(Vector3 v2)
+	{
+		return {x - v2.x, y - v2.y, z - v2.z};
+	}
+	Vector3 operator*(Vector3 v2)
+	{
+		return {x * v2.x, y * v2.y, z * v2.z};
+	}
+	Vector3 operator/(Vector3 v2)
+	{
+		return {x / v2.x, y / v2.y, z / v2.z};
+	}
 };
 
 struct Rect
