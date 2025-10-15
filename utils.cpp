@@ -154,24 +154,12 @@ struct Triangle3D
 	Vector3 c;
 };
 
-bool triangle_containes_point(Triangle3D &tri, Vector2 p)
+Triangle2D tri_3_to_2(Triangle3D v)
 {
-	Vector3 a = tri.a;
-	Vector3 b = tri.b;
-	Vector3 c = tri.c;
-	double s = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
-	double t = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
-
-	if ((s < 0) != (t < 0) && s != 0 && t != 0)
-	{
-		return false;
-	}
-
-	double d = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
-	return d == 0 || (d < 0) == (s + t <= 0);
+	return {{v.a.x, v.a.x}, {v.b.x, v.b.y}, {v.c.x, v.c.y}};
 }
 
-bool triangle_containes_point(Triangle2D &tri, Vector2 p)
+bool triangle_containes_point(Triangle2D tri, Vector2 p)
 {
 	Vector2 a = tri.a;
 	Vector2 b = tri.b;
@@ -188,7 +176,7 @@ bool triangle_containes_point(Triangle2D &tri, Vector2 p)
 	return d == 0 || (d < 0) == (s + t <= 0);
 }
 
-Rect triangle_bounding_box(Triangle2D &tri)
+Rect triangle_bounding_box(Triangle2D tri)
 {
 	Rect rect = {tri.a, {1., 1.}};
 	grow_to_fit(rect, tri.b);

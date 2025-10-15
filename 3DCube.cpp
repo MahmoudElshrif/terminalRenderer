@@ -143,9 +143,10 @@ void draw_cube(Screen &screen, Vector3 pos, double size, Vector3 rot)
 {
 	const vector<char> faces = {'F', 'B', 'L', 'R', 'T', 'B'};
 
-	int f = 0;
+	int f = -1;
 	for (Triangle3D i : cube.mesh)
 	{
+		f++;
 		i.a = rotate_point(i.a, rot);
 		i.b = rotate_point(i.b, rot);
 		i.c = rotate_point(i.c, rot);
@@ -164,7 +165,7 @@ void draw_cube(Screen &screen, Vector3 pos, double size, Vector3 rot)
 		if (dot(normal, -center) < 0)
 			continue;
 
-		draw_triangle(screen, project_triangle_on_surface(screen, i), faces[(f++) / 2]);
+		draw_triangle(screen, project_triangle_on_surface(screen, i), faces[(f) / 2]);
 	}
 	// for (double i = -size / 2; i < size / 2; i += stepsize)
 	// {

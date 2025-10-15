@@ -34,7 +34,7 @@ bool valid_position(int x, int y, int width, int height)
 	return true;
 }
 
-void set_cell(Screen &screen, int x, int y, int symb)
+void set_cell(Screen &screen, int x, int y, int symb, double z = 0)
 {
 	symb = min(max(symb, 0), 255);
 	if (!valid_position(x, y, screen.width, screen.height))
@@ -42,7 +42,11 @@ void set_cell(Screen &screen, int x, int y, int symb)
 		return;
 	}
 
-	screen.drawbuffer[x + y * screen.width] = (char)symb;
+	if (screen.zbuffer[x + y * screen.width] <= z)
+	{
+		screen.zbuffer[x + y * screen.width] = z;
+		screen.drawbuffer[x + y * screen.width] = get_character(screen, symb);
+	}
 }
 
 void set_cell_brightness(Screen &screen, int x, int y, int symb, double z = 0)
@@ -53,7 +57,7 @@ void set_cell_brightness(Screen &screen, int x, int y, int symb, double z = 0)
 		return;
 	}
 
-	if (screen.zbuffer[x + y * screen.width] >= z)
+	if (screen.zbuffer[x + y * screen.width] <= z)
 	{
 		screen.zbuffer[x + y * screen.width] = z;
 		screen.drawbuffer[x + y * screen.width] = get_character(screen, (char)symb);
@@ -76,11 +80,11 @@ void init_buffer(Screen &screen)
 
 void render_buffer(Screen &screen)
 {
-	printf("\033[2]j");
 	for (int k = 0; k < screen.width * screen.height; k++)
 	{
 		putchar(k % screen.width ? screen.drawbuffer[k] : 10);
 	}
 
+	printf("\033[2]j");
 	printf("\033[H");
 }

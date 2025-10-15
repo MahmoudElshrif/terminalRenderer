@@ -11,7 +11,7 @@ void draw_circle(Screen &screen, int x, int y, int rad, int bright = 254)
 		for (int yf = max(0, y - rad); yf < min(screen.height, y + rad + 1); yf++)
 		{
 			if ((yf - y) * (yf - y) + (xf - x) * (xf - x) / 8 <= rad * rad)
-				set_cell_brightness(screen, xf, yf, bright - 127);
+				set_cell_brightness(screen, xf, yf, bright - 127, 0.);
 		}
 	}
 }
@@ -50,7 +50,7 @@ void draw_rect(Screen &screen, double x, double y, double width, double height, 
 	}
 }
 
-void draw_triangle(Screen &screen, Triangle2D tri)
+void draw_triangle(Screen &screen, Triangle2D tri, char symb = '#')
 {
 	Rect rect = triangle_bounding_box(tri);
 	clip_rect_to_screen(rect, screen);
@@ -60,7 +60,7 @@ void draw_triangle(Screen &screen, Triangle2D tri)
 		{
 			if (triangle_containes_point(tri, {(double)i, (double)j}))
 			{
-				set_cell(screen, i, j, '#');
+				set_cell(screen, i, j, symb);
 			}
 		}
 	}
