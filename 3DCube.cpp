@@ -50,73 +50,73 @@ const Mesh cube{
 		// FRONT (+Z)
 		{
 			{-0.5, -0.5, 0.5},
-			{-0.5, 0.5, 0.5},
 			{0.5, 0.5, 0.5},
+			{-0.5, 0.5, 0.5},
 		},
 		{
 			{-0.5, -0.5, 0.5},
-			{0.5, 0.5, 0.5},
 			{0.5, -0.5, 0.5},
+			{0.5, 0.5, 0.5},
 		},
 
 		// BACK (-Z)
 		{
 			{0.5, 0.5, -0.5},
-			{-0.5, 0.5, -0.5},
 			{-0.5, -0.5, -0.5},
+			{-0.5, 0.5, -0.5},
 		},
 		{
 			{0.5, 0.5, -0.5},
-			{-0.5, -0.5, -0.5},
 			{0.5, -0.5, -0.5},
+			{-0.5, -0.5, -0.5},
 		},
 
 		// LEFT (-X)
 		{
 			{-0.5, -0.5, -0.5},
-			{-0.5, 0.5, -0.5},
 			{-0.5, 0.5, 0.5},
+			{-0.5, 0.5, -0.5},
 		},
 		{
 			{-0.5, -0.5, -0.5},
-			{-0.5, 0.5, 0.5},
 			{-0.5, -0.5, 0.5},
+			{-0.5, 0.5, 0.5},
 		},
 
 		// RIGHT (+X)
 		{
 			{0.5, -0.5, -0.5},
-			{0.5, 0.5, 0.5},
 			{0.5, 0.5, -0.5},
+			{0.5, 0.5, 0.5},
 		},
 		{
 			{0.5, -0.5, -0.5},
-			{0.5, -0.5, 0.5},
 			{0.5, 0.5, 0.5},
+			{0.5, -0.5, 0.5},
 		},
 
 		// TOP (+Y)
 		{
 			{-0.5, 0.5, -0.5},
-			{0.5, 0.5, -0.5},
 			{0.5, 0.5, 0.5},
+			{0.5, 0.5, -0.5},
 		},
 		{
 			{-0.5, 0.5, -0.5},
-			{0.5, 0.5, 0.5},
 			{-0.5, 0.5, 0.5},
+			{0.5, 0.5, 0.5},
 		},
 
 		// BOTTOM (-Y)
 		{
 			{-0.5, -0.5, -0.5},
-			{0.5, -0.5, 0.5},
 			{0.5, -0.5, -0.5},
+			{0.5, -0.5, 0.5},
 		},
 		{
 			{-0.5, -0.5, -0.5},
-			{-0.5, -0.5, 0.5},
 			{0.5, -0.5, 0.5},
+			{-0.5, -0.5, 0.5},
 		},
 
 	}};
@@ -141,7 +141,9 @@ Vector3 rotate_point(Vector3 p, Vector3 rot)
 
 void draw_cube(Screen &screen, Vector3 pos, double size, Vector3 rot)
 {
+	const vector<char> faces = {'F', 'B', 'L', 'R', 'T', 'B'};
 
+	int f = 0;
 	for (Triangle3D i : cube.mesh)
 	{
 		i.a = rotate_point(i.a, rot);
@@ -157,11 +159,12 @@ void draw_cube(Screen &screen, Vector3 pos, double size, Vector3 rot)
 		i.c = add(i.c, pos);
 
 		Vector3 normal = cross(i.b - i.a, i.c - i.a);
+		Vector3 center = (i.a + i.b + i.c) / 3.;
 
-		if (normal.z < 0.)
+		if (dot(normal, -center) < 0)
 			continue;
 
-		draw_triangle(screen, project_triangle_on_surface(screen, i));
+		draw_triangle(screen, project_triangle_on_surface(screen, i), faces[(f++) / 2]);
 	}
 	// for (double i = -size / 2; i < size / 2; i += stepsize)
 	// {
